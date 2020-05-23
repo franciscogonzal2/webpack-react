@@ -1,0 +1,146 @@
+start with npm init -y
+
+then npm i webpack webpack-cli --save-dev
+
+now we need to modify package.json 
+"scripts": {
+  "build": "webpack --mode production"
+}
+
+now we need to insatall and configure babel:
+install this:
+npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
+
+create a new file named .babelrc inside this file we need to add this code:
+{
+  "presets": ["@babel/preset-env", "@babel/preset-react"]
+}
+
+now we can add minimal configuration with webpack:
+create other file name webpack.config.js 
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      }
+    ]
+  }
+};
+now we need react and we are going to adding this with this commands:
+npm i react react-dom
+create a component named Form.js
+
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+
+class Form extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      value: ""
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(event) {
+    const { value } = event.target;
+    this.setState(() => {
+      return {
+        value
+      };
+    });
+  }
+
+  render() {
+    return (
+      <form>
+        <input
+          type="text"
+          value={this.state.value}
+          onChange={this.handleChange}
+        />
+      </form>
+    );
+  }
+}
+
+export default Form;
+
+const wrapper = document.getElementById("container");
+wrapper ? ReactDOM.render(<Form />, wrapper) : false;
+
+create an index.js in this folder src
+and import the component 
+import Form from "./js/components/Form";
+execute this command:
+npm run build
+
+intall this:
+npm i html-webpack-plugin html-loader --save-dev
+
+modify webpack config:
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: "html-loader"
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: "./src/index.html",
+      filename: "./index.html"
+    })
+  ]
+};
+
+create a new file index.html at scr folder
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>How to set up React, Webpack, and Babel</title>
+</head>
+<body>
+<div id="container"></div>
+</body>
+</html>
+
+execute this comand again:
+npm run build
+
+configure webpack dev server
+npm i webpack-dev-server --save-dev
+
+add at package.json
+"scripts": {
+  "start": "webpack-dev-server --open --mode development",
+  "build": "webpack --mode production"
+}
+
+now we can run our app and works!!
+npm start.
+
